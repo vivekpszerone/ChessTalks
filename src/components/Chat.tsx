@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Send, LogOut, MessageCircle, Bot, User, Loader2, AlertCircle } from 'lucide-react';
+import { Send, LogOut, Crown, Bot, User, Loader2, AlertCircle } from 'lucide-react';
+import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
   id: string;
@@ -96,17 +97,17 @@ export const Chat: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-white/20 px-4 py-4">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-amber-200/30 px-4 py-4 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full">
-              <MessageCircle className="h-6 w-6 text-white" />
+            <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full shadow-lg">
+              <Crown className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">AI Assistant</h1>
-              <p className="text-sm text-gray-600">Welcome, {user?.email}</p>
+              <h1 className="text-xl font-bold text-gray-900">ChessTalks</h1>
+              <p className="text-sm text-gray-600">Your Chess AI Assistant • Welcome, {user?.email}</p>
             </div>
           </div>
           <button
@@ -141,11 +142,17 @@ export const Chat: React.FC = () => {
         <div className="flex-1 overflow-y-auto mb-4 space-y-4">
           {messages.length === 0 && (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4">
-                <Bot className="h-8 w-8 text-white" />
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full mb-4 shadow-lg">
+                <Crown className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Start a conversation</h3>
-              <p className="text-gray-600">Ask me anything and I'll do my best to help!</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Welcome to ChessTalks!</h3>
+              <p className="text-gray-600 mb-4">Ask me about chess tournaments, player ratings, upcoming events, and more!</p>
+              <div className="flex flex-wrap justify-center gap-2 text-sm">
+                <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full">Tournament Info</span>
+                <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full">Player Ratings</span>
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">Upcoming Events</span>
+                <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full">Chess News</span>
+              </div>
             </div>
           )}
 
@@ -155,10 +162,10 @@ export const Chat: React.FC = () => {
               className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                className={`max-w-xs lg:max-w-2xl px-4 py-3 rounded-2xl ${
                   message.sender === 'user'
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                    : 'bg-white/80 backdrop-blur-sm text-gray-900 border border-white/20'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg'
+                    : 'bg-white/90 backdrop-blur-sm text-gray-900 border border-amber-200/30 shadow-sm'
                 }`}
               >
                 <div className="flex items-start space-x-2">
@@ -166,13 +173,17 @@ export const Chat: React.FC = () => {
                     {message.sender === 'user' ? (
                       <User className="h-5 w-5 mt-0.5" />
                     ) : (
-                      <Bot className="h-5 w-5 mt-0.5" />
+                      <Crown className="h-5 w-5 mt-0.5 text-amber-600" />
                     )}
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm leading-relaxed">{message.content}</p>
-                    <p className={`text-xs mt-1 ${
-                      message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                  <div className="flex-1 min-w-0">
+                    {message.sender === 'bot' ? (
+                      <MessageRenderer content={message.content} />
+                    ) : (
+                      <p className="text-sm leading-relaxed">{message.content}</p>
+                    )}
+                    <p className={`text-xs mt-2 ${
+                      message.sender === 'user' ? 'text-amber-100' : 'text-gray-500'
                     }`}>
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -184,11 +195,11 @@ export const Chat: React.FC = () => {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white/80 backdrop-blur-sm border border-white/20">
+              <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white/90 backdrop-blur-sm border border-amber-200/30 shadow-sm">
                 <div className="flex items-center space-x-2 text-gray-600">
-                  <Bot className="h-5 w-5" />
+                  <Crown className="h-5 w-5 text-amber-600" />
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">Thinking...</span>
+                  <span className="text-sm">Analyzing chess data...</span>
                 </div>
               </div>
             </div>
@@ -205,14 +216,14 @@ export const Chat: React.FC = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               disabled={loading}
-              placeholder="Type your message..."
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm disabled:opacity-50"
+              placeholder="Ask about tournaments, ratings, players..."
+              className="w-full px-4 py-3 pr-12 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/90 backdrop-blur-sm disabled:opacity-50 placeholder-gray-500"
             />
           </div>
           <button
             type="submit"
             disabled={loading || !inputMessage.trim()}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-lg"
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />

@@ -1,11 +1,36 @@
 import React from 'react';
-import { Trophy, Calendar, Star, Users, Target, Crown, Award, TrendingUp } from 'lucide-react';
+import { Trophy, Calendar, Star, Users, Target, Crown, Award, TrendingUp, ExternalLink } from 'lucide-react';
 
 interface MessageRendererProps {
   content: string;
 }
 
 export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => {
+  // Function to detect and render links
+  const renderTextWithLinks = (text: string) => {
+    // Regular expression to match URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
+    
+    return parts.map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-1 text-amber-600 hover:text-amber-700 underline decoration-amber-300 hover:decoration-amber-500 transition-colors"
+          >
+            <span>{part}</span>
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
   // Check if the message contains structured data patterns
   const renderStructuredContent = (text: string) => {
     // Handle numbered lists (tournaments, players, etc.)
@@ -27,7 +52,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {otherContent.length > 0 && (
             <div className="space-y-2">
               {otherContent.map((line, index) => (
-                <p key={index} className="text-sm leading-relaxed">{line}</p>
+                <p key={index} className="text-sm leading-relaxed">
+                  {renderTextWithLinks(line)}
+                </p>
               ))}
             </div>
           )}
@@ -43,7 +70,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
                       {icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">{cleanItem}</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {renderTextWithLinks(cleanItem)}
+                      </p>
                     </div>
                   </div>
                 );
@@ -73,7 +102,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {otherContent.length > 0 && (
             <div className="space-y-2">
               {otherContent.map((line, index) => (
-                <p key={index} className="text-sm leading-relaxed">{line}</p>
+                <p key={index} className="text-sm leading-relaxed">
+                  {renderTextWithLinks(line)}
+                </p>
               ))}
             </div>
           )}
@@ -87,7 +118,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
                     <div className="flex-shrink-0 mt-1">
                       {icon}
                     </div>
-                    <p className="text-sm leading-relaxed flex-1">{item}</p>
+                    <p className="text-sm leading-relaxed flex-1">
+                      {renderTextWithLinks(item)}
+                    </p>
                   </div>
                 );
               })}
@@ -104,7 +137,9 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {text.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
               <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
-              <p className="text-sm leading-relaxed">{line.trim()}</p>
+              <p className="text-sm leading-relaxed">
+                {renderTextWithLinks(line.trim())}
+              </p>
             </div>
           ))}
         </div>
@@ -118,18 +153,22 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {text.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
               <Trophy className="h-4 w-4 text-amber-500 flex-shrink-0" />
-              <p className="text-sm leading-relaxed">{line.trim()}</p>
+              <p className="text-sm leading-relaxed">
+                {renderTextWithLinks(line.trim())}
+              </p>
             </div>
           ))}
         </div>
       );
     }
 
-    // Default paragraph rendering with line breaks
+    // Default paragraph rendering with line breaks and links
     return (
       <div className="space-y-2">
         {text.split('\n').filter(line => line.trim()).map((line, index) => (
-          <p key={index} className="text-sm leading-relaxed">{line.trim()}</p>
+          <p key={index} className="text-sm leading-relaxed">
+            {renderTextWithLinks(line.trim())}
+          </p>
         ))}
       </div>
     );

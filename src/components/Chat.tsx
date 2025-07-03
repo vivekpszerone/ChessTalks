@@ -175,46 +175,61 @@ export const Chat: React.FC = () => {
               {/* You can add chat history items here */}
             </div>
           </div>
-
-          {/* User Menu */}
-          <div className="border-t border-gray-700 p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-white truncate">{user?.email}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="text-gray-400 hover:text-white transition-colors"
-                title="Logout"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col lg:ml-0">
-        {/* Mobile Header */}
-        <div className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        {/* Top Header/Navbar */}
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
           <div className="flex items-center justify-between">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-            >
-              <Menu className="h-6 w-6" />
-            </button>
-            <div className="flex items-center space-x-2">
-              <Crown className="h-5 w-5 text-blue-500" />
-              <span className="font-semibold text-gray-900 dark:text-white">ChessTalks</span>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+              <div className="hidden lg:flex items-center space-x-2">
+                <Crown className="h-5 w-5 text-blue-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">ChessTalks</span>
+              </div>
+              <div className="lg:hidden flex items-center space-x-2">
+                <Crown className="h-5 w-5 text-blue-500" />
+                <span className="font-semibold text-gray-900 dark:text-white">ChessTalks</span>
+              </div>
             </div>
-            <div className="w-6"></div>
+            
+            {/* Right side - User info and actions */}
+            <div className="flex items-center space-x-4">
+              {messages.length > 0 && (
+                <button
+                  onClick={clearChat}
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  title="Clear chat history"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Clear</span>
+                </button>
+              )}
+              
+              <div className="flex items-center space-x-3">
+                <div className="hidden sm:flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">{user?.email}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  title="Logout"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -338,7 +353,7 @@ export const Chat: React.FC = () => {
           )}
         </div>
 
-        {/* Input Area */}
+        {/* Input Area - Fixed at bottom */}
         <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={sendMessage} className="relative">

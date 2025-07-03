@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Send, LogOut, Crown, Bot, User, Loader2, AlertCircle, Trash2 } from 'lucide-react';
+import { Send, LogOut, Crown, Bot, User, Loader2, AlertCircle, Trash2, Mic, Paperclip, Trophy, Calendar, Star } from 'lucide-react';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
@@ -10,6 +10,13 @@ interface Message {
   timestamp: Date;
 }
 
+interface SuggestionCard {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  query: string;
+}
+
 export const Chat: React.FC = () => {
   const { user, signOut, session } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,6 +24,27 @@ export const Chat: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const suggestionCards: SuggestionCard[] = [
+    {
+      icon: <Trophy className="h-5 w-5 text-blue-400" />,
+      title: "Tournament Analysis",
+      description: "Get insights on recent chess tournaments and upcoming events",
+      query: "Show me the latest chess tournament results and upcoming major tournaments"
+    },
+    {
+      icon: <Star className="h-5 w-5 text-green-400" />,
+      title: "Player Rankings",
+      description: "Check current FIDE ratings and player statistics",
+      query: "What are the current top 10 chess player rankings?"
+    },
+    {
+      icon: <Calendar className="h-5 w-5 text-purple-400" />,
+      title: "Chess Calendar",
+      description: "Find upcoming chess events and tournament schedules",
+      query: "What chess tournaments are happening this month?"
+    }
+  ];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -29,6 +57,10 @@ export const Chat: React.FC = () => {
   const clearChat = () => {
     setMessages([]);
     setError('');
+  };
+
+  const handleSuggestionClick = (query: string) => {
+    setInputMessage(query);
   };
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -102,24 +134,25 @@ export const Chat: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-orange-50">
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-amber-200/30 px-4 py-4 shadow-sm">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
+      <div className="bg-gray-800/50 backdrop-blur-sm border-b border-gray-700/50 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full shadow-lg">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
               <Crown className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">ChessTalks</h1>
-              <p className="text-sm text-gray-600">Your Chess AI Assistant • Welcome, {user?.email}</p>
+              <h1 className="text-xl font-bold text-white">ChessTalks</h1>
+              <p className="text-sm text-gray-400">Your Chess AI Assistant</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-400">Welcome, {user?.email}</span>
             {messages.length > 0 && (
               <button
                 onClick={clearChat}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-colors"
                 title="Clear chat history"
               >
                 <Trash2 className="h-4 w-4" />
@@ -128,7 +161,7 @@ export const Chat: React.FC = () => {
             )}
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
             >
               <LogOut className="h-5 w-5" />
               <span className="hidden sm:inline">Logout</span>
@@ -140,12 +173,12 @@ export const Chat: React.FC = () => {
       {/* Error Banner */}
       {error && (
         <div className="max-w-4xl mx-auto p-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center space-x-2 text-red-700">
+          <div className="bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-center space-x-2 text-red-300">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <span className="text-sm">{error}</span>
             <button
               onClick={() => setError('')}
-              className="ml-auto text-red-500 hover:text-red-700"
+              className="ml-auto text-red-400 hover:text-red-300"
             >
               ×
             </button>
@@ -153,102 +186,169 @@ export const Chat: React.FC = () => {
         </div>
       )}
 
-      {/* Chat Container */}
-      <div className="max-w-4xl mx-auto p-4 h-[calc(100vh-120px)] flex flex-col">
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-          {messages.length === 0 && (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full mb-4 shadow-lg">
-                <Crown className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Welcome to ChessTalks!</h3>
-              <p className="text-gray-600 mb-4">Ask me about chess tournaments, player ratings, upcoming events, and more!</p>
-              <div className="flex flex-wrap justify-center gap-2 text-sm">
-                <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full">Tournament Info</span>
-                <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full">Player Ratings</span>
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full">Upcoming Events</span>
-                <span className="px-3 py-1 bg-red-100 text-red-800 rounded-full">Chess News</span>
-              </div>
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {messages.length === 0 ? (
+          /* Welcome Screen */
+          <div className="text-center space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-bold">
+                Chess insights{' '}
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  in seconds
+                </span>
+              </h2>
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                ChessTalks is your AI assistant for tournaments, player ratings, upcoming events, and more
+              </p>
             </div>
-          )}
 
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-xs lg:max-w-2xl px-4 py-3 rounded-2xl ${
-                  message.sender === 'user'
-                    ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg'
-                    : 'bg-white/90 backdrop-blur-sm text-gray-900 border border-amber-200/30 shadow-sm'
-                }`}
-              >
-                <div className="flex items-start space-x-2">
-                  <div className="flex-shrink-0">
-                    {message.sender === 'user' ? (
-                      <User className="h-5 w-5 mt-0.5" />
-                    ) : (
-                      <Crown className="h-5 w-5 mt-0.5 text-amber-600" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {message.sender === 'bot' ? (
-                      <MessageRenderer content={message.content} />
-                    ) : (
-                      <p className="text-sm leading-relaxed">{message.content}</p>
-                    )}
-                    <p className={`text-xs mt-2 ${
-                      message.sender === 'user' ? 'text-amber-100' : 'text-gray-500'
-                    }`}>
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </p>
+            {/* Search Input */}
+            <div className="max-w-2xl mx-auto">
+              <form onSubmit={sendMessage} className="relative">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    disabled={loading}
+                    placeholder="Ask anything..."
+                    className="w-full px-6 py-4 pr-24 bg-gray-800/50 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-400 text-lg"
+                  />
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+                    <button
+                      type="button"
+                      className="p-2 text-gray-400 hover:text-white transition-colors"
+                      title="Add attachment"
+                    >
+                      <Paperclip className="h-5 w-5" />
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading || !inputMessage.trim()}
+                      className="p-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+                    >
+                      {loading ? (
+                        <Loader2 className="h-5 w-5 animate-spin text-white" />
+                      ) : (
+                        <Send className="h-5 w-5 text-white" />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      className="p-2 text-gray-400 hover:text-white transition-colors"
+                      title="Voice input"
+                    >
+                      <Mic className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
-          ))}
 
-          {loading && (
-            <div className="flex justify-start">
-              <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-white/90 backdrop-blur-sm border border-amber-200/30 shadow-sm">
-                <div className="flex items-center space-x-2 text-gray-600">
-                  <Crown className="h-5 w-5 text-amber-600" />
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm">Analyzing chess data...</span>
-                </div>
-              </div>
+            {/* Suggestion Cards */}
+            <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+              {suggestionCards.map((card, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(card.query)}
+                  className="p-6 bg-gray-800/30 border border-gray-700/50 rounded-xl hover:bg-gray-800/50 hover:border-gray-600 transition-all duration-200 text-left group"
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 p-2 bg-gray-700/50 rounded-lg group-hover:bg-gray-700 transition-colors">
+                      {card.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-white mb-2">{card.title}</h3>
+                      <p className="text-sm text-gray-400 leading-relaxed">{card.description}</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Form */}
-        <form onSubmit={sendMessage} className="flex space-x-2">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              disabled={loading}
-              placeholder="Ask about tournaments, ratings, players..."
-              className="w-full px-4 py-3 pr-12 border border-amber-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200 bg-white/90 backdrop-blur-sm disabled:opacity-50 placeholder-gray-500"
-            />
           </div>
-          <button
-            type="submit"
-            disabled={loading || !inputMessage.trim()}
-            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl hover:from-amber-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-lg"
-          >
-            {loading ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <Send className="h-5 w-5" />
+        ) : (
+          /* Chat Messages */
+          <div className="space-y-6">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-2xl px-6 py-4 rounded-2xl ${
+                    message.sender === 'user'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-800/50 text-white border border-gray-700/50'
+                  }`}
+                >
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      {message.sender === 'user' ? (
+                        <User className="h-5 w-5 mt-0.5" />
+                      ) : (
+                        <Crown className="h-5 w-5 mt-0.5 text-blue-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {message.sender === 'bot' ? (
+                        <MessageRenderer content={message.content} />
+                      ) : (
+                        <p className="text-sm leading-relaxed">{message.content}</p>
+                      )}
+                      <p className={`text-xs mt-2 ${
+                        message.sender === 'user' ? 'text-blue-200' : 'text-gray-500'
+                      }`}>
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {loading && (
+              <div className="flex justify-start">
+                <div className="max-w-xs lg:max-w-md px-6 py-4 rounded-2xl bg-gray-800/50 border border-gray-700/50">
+                  <div className="flex items-center space-x-3 text-gray-400">
+                    <Crown className="h-5 w-5 text-blue-400" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Analyzing chess data...</span>
+                  </div>
+                </div>
+              </div>
             )}
-          </button>
-        </form>
+
+            <div ref={messagesEndRef} />
+
+            {/* Input Form for Chat Mode */}
+            <div className="sticky bottom-0 pt-4">
+              <form onSubmit={sendMessage} className="relative max-w-2xl mx-auto">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    disabled={loading}
+                    placeholder="Ask about tournaments, ratings, players..."
+                    className="w-full px-6 py-4 pr-16 bg-gray-800/50 border border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-400"
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading || !inputMessage.trim()}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-5 w-5 animate-spin text-white" />
+                    ) : (
+                      <Send className="h-5 w-5 text-white" />
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -12,8 +12,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="flex items-center space-x-2 text-blue-600">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="flex items-center space-x-2 text-blue-400">
           <Loader2 className="h-6 w-6 animate-spin" />
           <span className="text-lg font-medium">Loading...</span>
         </div>

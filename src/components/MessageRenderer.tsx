@@ -20,7 +20,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center space-x-1 text-amber-600 hover:text-amber-700 underline decoration-amber-300 hover:decoration-amber-500 transition-colors"
+            className="inline-flex items-center space-x-1 text-blue-400 hover:text-blue-300 underline decoration-blue-400/50 hover:decoration-blue-300 transition-colors"
           >
             <span>{part}</span>
             <ExternalLink className="h-3 w-3" />
@@ -52,7 +52,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {otherContent.length > 0 && (
             <div className="space-y-2">
               {otherContent.map((line, index) => (
-                <p key={index} className="text-sm leading-relaxed">
+                <p key={index} className="text-sm leading-relaxed text-gray-200">
                   {renderTextWithLinks(line)}
                 </p>
               ))}
@@ -65,12 +65,12 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
                 const icon = getIconForContent(cleanItem);
                 
                 return (
-                  <div key={index} className="flex items-start space-x-3 p-3 bg-gray-50/50 rounded-lg border border-gray-100">
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-gray-700/30 rounded-lg border border-gray-600/30">
                     <div className="flex-shrink-0 mt-0.5">
                       {icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-gray-200">
                         {renderTextWithLinks(cleanItem)}
                       </p>
                     </div>
@@ -102,7 +102,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
           {otherContent.length > 0 && (
             <div className="space-y-2">
               {otherContent.map((line, index) => (
-                <p key={index} className="text-sm leading-relaxed">
+                <p key={index} className="text-sm leading-relaxed text-gray-200">
                   {renderTextWithLinks(line)}
                 </p>
               ))}
@@ -118,7 +118,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
                     <div className="flex-shrink-0 mt-1">
                       {icon}
                     </div>
-                    <p className="text-sm leading-relaxed flex-1">
+                    <p className="text-sm leading-relaxed flex-1 text-gray-200">
                       {renderTextWithLinks(item)}
                     </p>
                   </div>
@@ -136,8 +136,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
         <div className="space-y-2">
           {text.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
-              <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
-              <p className="text-sm leading-relaxed">
+              <Star className="h-4 w-4 text-yellow-400 flex-shrink-0" />
+              <p className="text-sm leading-relaxed text-gray-200">
                 {renderTextWithLinks(line.trim())}
               </p>
             </div>
@@ -152,8 +152,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
         <div className="space-y-2">
           {text.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
-              <Trophy className="h-4 w-4 text-amber-500 flex-shrink-0" />
-              <p className="text-sm leading-relaxed">
+              <Trophy className="h-4 w-4 text-amber-400 flex-shrink-0" />
+              <p className="text-sm leading-relaxed text-gray-200">
                 {renderTextWithLinks(line.trim())}
               </p>
             </div>
@@ -166,7 +166,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     return (
       <div className="space-y-2">
         {text.split('\n').filter(line => line.trim()).map((line, index) => (
-          <p key={index} className="text-sm leading-relaxed">
+          <p key={index} className="text-sm leading-relaxed text-gray-200">
             {renderTextWithLinks(line.trim())}
           </p>
         ))}
@@ -178,32 +178,32 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     const lowerContent = content.toLowerCase();
     
     if (lowerContent.includes('tournament') || lowerContent.includes('championship')) {
-      return <Trophy className="h-4 w-4 text-amber-500" />;
+      return <Trophy className="h-4 w-4 text-amber-400" />;
     }
     if (lowerContent.includes('rating') || lowerContent.includes('elo')) {
-      return <Star className="h-4 w-4 text-yellow-500" />;
+      return <Star className="h-4 w-4 text-yellow-400" />;
     }
     if (lowerContent.includes('player') || lowerContent.includes('grandmaster') || lowerContent.includes('master')) {
-      return <Crown className="h-4 w-4 text-purple-500" />;
+      return <Crown className="h-4 w-4 text-purple-400" />;
     }
     if (lowerContent.includes('date') || lowerContent.includes('schedule') || lowerContent.includes('upcoming')) {
-      return <Calendar className="h-4 w-4 text-blue-500" />;
+      return <Calendar className="h-4 w-4 text-blue-400" />;
     }
     if (lowerContent.includes('winner') || lowerContent.includes('champion') || lowerContent.includes('victory')) {
-      return <Award className="h-4 w-4 text-green-500" />;
+      return <Award className="h-4 w-4 text-green-400" />;
     }
     if (lowerContent.includes('rank') || lowerContent.includes('position') || lowerContent.includes('standing')) {
-      return <TrendingUp className="h-4 w-4 text-indigo-500" />;
+      return <TrendingUp className="h-4 w-4 text-indigo-400" />;
     }
     if (lowerContent.includes('team') || lowerContent.includes('club') || lowerContent.includes('organization')) {
-      return <Users className="h-4 w-4 text-cyan-500" />;
+      return <Users className="h-4 w-4 text-cyan-400" />;
     }
     
-    return <Target className="h-4 w-4 text-gray-500" />;
+    return <Target className="h-4 w-4 text-gray-400" />;
   };
 
   return (
-    <div className="prose prose-sm max-w-none">
+    <div className="prose prose-sm max-w-none prose-invert">
       {renderStructuredContent(content)}
     </div>
   );

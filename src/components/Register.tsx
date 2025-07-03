@@ -56,10 +56,9 @@ export const Register: React.FC = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full mb-4 shadow-lg">
               <CheckCircle className="h-8 w-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Check Your Email</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">Account Created Successfully!</h1>
             <p className="text-gray-400 mb-6">
-              We've sent you a confirmation link at <strong className="text-white">{email}</strong>. 
-              Please check your email and click the link to complete your registration and start using ChessTalks.
+              Your account has been created and you can now sign in to start using ChessTalks.
             </p>
             <Link
               to="/login"
@@ -170,7 +169,7 @@ export const Register: React.FC = () => {
           <div className="mt-6 text-center">
             <p className="text-gray-400">
               Already have an account?{' '}
-              <Link to="/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
                 Sign in
               </Link>
             </p>

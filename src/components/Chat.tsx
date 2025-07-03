@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Paperclip, Trophy, Calendar, Star } from 'lucide-react';
+import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Paperclip, Trophy, Calendar, Star, Globe, ChevronDown, Mic } from 'lucide-react';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
@@ -8,6 +8,7 @@ interface Message {
   content: string;
   sender: 'user' | 'bot';
   timestamp: Date;
+  hasWebSearch?: boolean;
 }
 
 interface SuggestionCard {
@@ -106,13 +107,13 @@ export const Chat: React.FC = () => {
         content: responseText || 'I received your message but couldn\'t generate a proper response.',
         sender: 'bot',
         timestamp: new Date(),
+        hasWebSearch: true,
       };
 
       setMessages(prev => [...prev, botMessage]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to send message');
       
-      // Add error message to chat
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
@@ -134,25 +135,25 @@ export const Chat: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900 text-white">
       {/* Top Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="border-b border-gray-800 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
               <Crown className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">ChessTalks</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Your Chess AI Assistant</p>
+              <h1 className="text-xl font-bold text-white">ChessTalks</h1>
+              <p className="text-sm text-gray-400">Your Chess AI Assistant</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Welcome, {user?.email}</span>
+            <span className="text-sm text-gray-400">Welcome, {user?.email}</span>
             {messages.length > 0 && (
               <button
                 onClick={clearChat}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 text-gray-400 hover:text-red-400 hover:bg-gray-800 rounded-lg transition-colors"
                 title="Clear chat history"
               >
                 <Trash2 className="h-4 w-4" />
@@ -161,7 +162,7 @@ export const Chat: React.FC = () => {
             )}
             <button
               onClick={handleLogout}
-              className="flex items-center space-x-2 px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
             >
               <LogOut className="h-5 w-5" />
               <span className="hidden sm:inline">Logout</span>
@@ -173,12 +174,12 @@ export const Chat: React.FC = () => {
       {/* Error Banner */}
       {error && (
         <div className="max-w-4xl mx-auto p-4">
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 flex items-center space-x-2 text-red-700 dark:text-red-300">
+          <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 flex items-center space-x-2 text-red-300">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <span className="text-sm">{error}</span>
             <button
               onClick={() => setError('')}
-              className="ml-auto text-red-500 hover:text-red-700 dark:hover:text-red-200"
+              className="ml-auto text-red-400 hover:text-red-200"
             >
               ×
             </button>
@@ -192,13 +193,13 @@ export const Chat: React.FC = () => {
           /* Welcome Screen */
           <div className="text-center space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-4xl md:text-5xl font-bold text-white">
                 Chess insights{' '}
-                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                   in seconds
                 </span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-400 max-w-2xl mx-auto">
                 ChessTalks is your AI assistant for tournaments, player ratings, upcoming events, and more
               </p>
             </div>
@@ -209,15 +210,15 @@ export const Chat: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(card.query)}
-                  className="p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 text-left group"
+                  className="p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 transition-all duration-200 text-left group"
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors">
+                    <div className="flex-shrink-0 p-2 bg-gray-700 rounded-lg group-hover:bg-gray-600 transition-colors">
                       {card.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{card.title}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{card.description}</p>
+                      <h3 className="font-semibold text-white mb-2">{card.title}</h3>
+                      <p className="text-sm text-gray-400 leading-relaxed">{card.description}</p>
                     </div>
                   </div>
                 </button>
@@ -226,49 +227,63 @@ export const Chat: React.FC = () => {
           </div>
         ) : (
           /* Chat Messages */
-          <div className="space-y-6">
+          <div className="space-y-8">
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs lg:max-w-2xl px-6 py-4 rounded-2xl ${
-                    message.sender === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
-                  }`}
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0">
-                      {message.sender === 'user' ? (
-                        <User className="h-5 w-5 mt-0.5" />
-                      ) : (
-                        <Crown className="h-5 w-5 mt-0.5 text-blue-500" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      {message.sender === 'bot' ? (
-                        <MessageRenderer content={message.content} />
-                      ) : (
-                        <p className="text-sm leading-relaxed">{message.content}</p>
-                      )}
-                      <p className={`text-xs mt-2 ${
-                        message.sender === 'user' ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400'
-                      }`}>
-                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
+              <div key={message.id} className="space-y-4">
+                {/* User Message */}
+                {message.sender === 'user' && (
+                  <div className="flex justify-end">
+                    <div className="max-w-3xl">
+                      <div className="flex items-start space-x-3 justify-end">
+                        <div className="bg-gray-800 rounded-2xl px-6 py-4 max-w-full">
+                          <p className="text-white text-sm leading-relaxed">{message.content}</p>
+                        </div>
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Bot Message */}
+                {message.sender === 'bot' && (
+                  <div className="flex justify-start">
+                    <div className="max-w-full w-full">
+                      <div className="flex items-start space-x-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                          <Crown className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-3">
+                          {/* Web Search Indicator */}
+                          {message.hasWebSearch && (
+                            <div className="flex items-center space-x-2 text-sm text-gray-400">
+                              <Globe className="h-4 w-4" />
+                              <span>Web Search</span>
+                              <span className="text-green-400">• Result Available</span>
+                              <ChevronDown className="h-4 w-4" />
+                            </div>
+                          )}
+                          
+                          {/* Message Content */}
+                          <div className="prose prose-invert max-w-none">
+                            <MessageRenderer content={message.content} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
 
             {loading && (
               <div className="flex justify-start">
-                <div className="max-w-xs lg:max-w-md px-6 py-4 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                    <Crown className="h-5 w-5 text-blue-500" />
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <Crown className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex items-center space-x-3 text-gray-400">
                     <Loader2 className="h-4 w-4 animate-spin" />
                     <span className="text-sm">Analyzing chess data...</span>
                   </div>
@@ -282,10 +297,10 @@ export const Chat: React.FC = () => {
       </div>
 
       {/* Input Form - Fixed at bottom */}
-      <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="sticky bottom-0 bg-gray-900 border-t border-gray-800 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <form onSubmit={sendMessage} className="relative">
-            <div className="relative">
+            <div className="relative bg-gray-800 rounded-2xl border border-gray-700 focus-within:border-gray-600">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
@@ -298,32 +313,40 @@ export const Chat: React.FC = () => {
                 disabled={loading}
                 placeholder="Ask anything..."
                 rows={1}
-                className="w-full px-6 py-4 pr-24 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                className="w-full px-6 py-4 pr-32 bg-transparent border-0 focus:ring-0 focus:outline-none text-white placeholder-gray-400 resize-none"
                 style={{ minHeight: '56px', maxHeight: '120px' }}
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
                 <button
                   type="button"
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="p-2 text-gray-400 hover:text-gray-300 transition-colors"
                   title="Add attachment"
                 >
                   <Paperclip className="h-5 w-5" />
                 </button>
+                <span className="text-gray-600">|</span>
+                <button
+                  type="button"
+                  className="p-2 text-gray-400 hover:text-gray-300 transition-colors"
+                  title="Voice input"
+                >
+                  <Mic className="h-5 w-5" />
+                </button>
                 <button
                   type="submit"
                   disabled={loading || !inputMessage.trim()}
-                  className="p-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
+                  className="p-2 bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
                 >
                   {loading ? (
-                    <Loader2 className="h-5 w-5 animate-spin text-white" />
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-900" />
                   ) : (
-                    <Send className="h-5 w-5 text-white" />
+                    <Send className="h-5 w-5 text-gray-900" />
                   )}
                 </button>
               </div>
             </div>
           </form>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
+          <p className="text-xs text-gray-500 mt-2 text-center">
             ChessTalks can make mistakes. Consider checking important information.
           </p>
         </div>

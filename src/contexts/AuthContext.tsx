@@ -95,14 +95,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Force clear the state
       setSession(null);
       setUser(null);
-      // Force reload to clear any cached state
-      window.location.href = '/login';
+      // Redirect to home page instead of login to avoid 404
+      window.location.href = '/';
     } catch (err) {
       console.error('Sign out error:', err);
       // Force clear even on error
       setSession(null);
       setUser(null);
-      window.location.href = '/login';
+      window.location.href = '/';
     }
   };
 

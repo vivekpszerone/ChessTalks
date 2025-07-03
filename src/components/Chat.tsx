@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Paperclip, Trophy, Calendar, Star, Globe, ChevronDown, Mic } from 'lucide-react';
+import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Trophy, Calendar, Star, Globe, ChevronDown } from 'lucide-react';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
@@ -136,8 +136,8 @@ export const Chat: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Top Header */}
-      <div className="border-b border-gray-800 px-6 py-4">
+      {/* Sticky Top Header */}
+      <div className="sticky top-0 z-50 bg-gray-900 border-b border-gray-800 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
@@ -188,7 +188,7 @@ export const Chat: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8 min-h-[calc(100vh-200px)]">
+      <div className="max-w-4xl mx-auto px-6 py-8 pb-32">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="text-center space-y-8">
@@ -297,7 +297,7 @@ export const Chat: React.FC = () => {
       </div>
 
       {/* Input Form - Fixed at bottom */}
-      <div className="sticky bottom-0 bg-gray-900 border-t border-gray-800 px-6 py-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <form onSubmit={sendMessage} className="relative">
             <div className="relative bg-gray-800 rounded-2xl border border-gray-700 focus-within:border-gray-600">
@@ -313,25 +313,10 @@ export const Chat: React.FC = () => {
                 disabled={loading}
                 placeholder="Ask anything..."
                 rows={1}
-                className="w-full px-6 py-4 pr-32 bg-transparent border-0 focus:ring-0 focus:outline-none text-white placeholder-gray-400 resize-none"
+                className="w-full px-6 py-4 pr-16 bg-transparent border-0 focus:ring-0 focus:outline-none text-white placeholder-gray-400 resize-none"
                 style={{ minHeight: '56px', maxHeight: '120px' }}
               />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
-                <button
-                  type="button"
-                  className="p-2 text-gray-400 hover:text-gray-300 transition-colors"
-                  title="Add attachment"
-                >
-                  <Paperclip className="h-5 w-5" />
-                </button>
-                <span className="text-gray-600">|</span>
-                <button
-                  type="button"
-                  className="p-2 text-gray-400 hover:text-gray-300 transition-colors"
-                  title="Voice input"
-                >
-                  <Mic className="h-5 w-5" />
-                </button>
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 <button
                   type="submit"
                   disabled={loading || !inputMessage.trim()}

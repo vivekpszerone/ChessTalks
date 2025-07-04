@@ -41,8 +41,18 @@ export const useProfile = () => {
         .eq('id', user.id)
         .single();
 
-      if (error) throw error;
-      setProfile(data);
+      if (error) {
+        // If no profile exists (PGRST116), this is expected for new users
+        if (error.code === 'PGRST116') {
+          setProfile(null);
+          setError(null);
+        } else {
+          throw error;
+        }
+      } else {
+        setProfile(data);
+        setError(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch profile');
     } finally {

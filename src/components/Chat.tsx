@@ -319,7 +319,7 @@ export const Chat: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-44 sm:pb-40">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-56 sm:pb-48">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="text-center space-y-6 sm:space-y-8">
@@ -357,6 +357,25 @@ export const Chat: React.FC = () => {
                   </div>
                 </button>
               ))}
+            </div>
+
+            {/* Prompt Suggestions - Moved below cards */}
+            <div className="mt-8 sm:mt-12">
+              <h4 className="text-lg sm:text-xl font-semibold text-gray-300 mb-4 px-2">Quick Questions</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-4xl mx-auto px-2">
+                {promptSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handlePromptSuggestionClick(suggestion.text)}
+                    className="flex items-center space-x-3 px-4 py-3 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-lg text-sm text-gray-300 hover:text-white transition-all duration-200 group text-left w-full"
+                  >
+                    <div className="flex-shrink-0">
+                      {suggestion.icon}
+                    </div>
+                    <span className="flex-1 truncate">{suggestion.text}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         ) : (
@@ -432,29 +451,7 @@ export const Chat: React.FC = () => {
 
       {/* Input Form - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 px-4 sm:px-6 py-4 z-40">
-        <div className="max-w-6xl mx-auto space-y-4">
-          {/* Prompt Suggestions - Only show when no messages */}
-          {messages.length === 0 && (
-            <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
-              {promptSuggestions.map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => handlePromptSuggestionClick(suggestion.text)}
-                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group flex-shrink-0"
-                >
-                  {suggestion.icon}
-                  <span className="hidden sm:inline whitespace-nowrap">{suggestion.text}</span>
-                  <span className="sm:hidden text-xs whitespace-nowrap">
-                    {suggestion.text.length > 20 
-                      ? suggestion.text.substring(0, 20) + '...' 
-                      : suggestion.text
-                    }
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-
+        <div className="max-w-6xl mx-auto">
           <form onSubmit={sendMessage} className="relative">
             <div className="relative bg-gray-800 rounded-2xl border border-gray-700 focus-within:border-gray-600">
               <textarea
@@ -487,7 +484,7 @@ export const Chat: React.FC = () => {
               </div>
             </div>
           </form>
-          <p className="text-xs text-gray-500 text-center">
+          <p className="text-xs text-gray-500 text-center mt-3">
             ChessTalks can make mistakes. Consider checking important information.
           </p>
         </div>

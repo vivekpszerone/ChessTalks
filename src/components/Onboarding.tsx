@@ -75,6 +75,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
     try {
       const profileData = {
+        id: user?.id,
         full_name: formData.full_name.trim(),
         fide_rating: formData.fide_rating ? parseInt(formData.fide_rating) : null,
         chess_title: formData.chess_title || null,

@@ -30,11 +30,32 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     });
   };
 
+  // Enhanced text processing with emojis and formatting
+  const processText = (text: string) => {
+    // Add emojis for chess-related terms
+    let processedText = text
+      .replace(/\b(chess|Chess)\b/g, '♟️ Chess')
+      .replace(/\b(tournament|Tournament)\b/g, '🏆 Tournament')
+      .replace(/\b(rating|Rating|FIDE)\b/g, '📊 Rating')
+      .replace(/\b(grandmaster|Grandmaster|GM)\b/g, '👑 Grandmaster')
+      .replace(/\b(world champion|World Champion)\b/g, '🌟 World Champion')
+      .replace(/\b(game|Game)\b/g, '⚔️ Game');
+
+    // Bold important terms (player names, tournament names)
+    processedText = processedText
+      .replace(/\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g, '**$1**') // Names like "Magnus Carlsen"
+      .replace(/\b(Candidates Tournament|World Championship|Chess Olympiad|Grand Prix)\b/g, '**$1**');
+
+    return processedText;
+  };
+
   // Check if the message contains structured data patterns
   const renderStructuredContent = (text: string) => {
+    const processedText = processText(text);
+
     // Handle numbered lists (tournaments, players, etc.)
-    if (text.includes('1.') || text.includes('1)')) {
-      const lines = text.split('\n').filter(line => line.trim());
+    if (processedText.includes('1.') || processedText.includes('1)')) {
+      const lines = processedText.split('\n').filter(line => line.trim());
       const listItems: string[] = [];
       const otherContent: string[] = [];
       
@@ -83,8 +104,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     }
 
     // Handle bullet points
-    if (text.includes('•') || text.includes('-')) {
-      const lines = text.split('\n').filter(line => line.trim());
+    if (processedText.includes('•') || processedText.includes('-')) {
+      const lines = processedText.split('\n').filter(line => line.trim());
       const bulletItems: string[] = [];
       const otherContent: string[] = [];
       
@@ -130,10 +151,10 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     }
 
     // Handle rating information
-    if (text.toLowerCase().includes('rating') || text.toLowerCase().includes('elo')) {
+    if (processedText.toLowerCase().includes('rating') || processedText.toLowerCase().includes('elo')) {
       return (
         <div className="space-y-3">
-          {text.split('\n').filter(line => line.trim()).map((line, index) => (
+          {processedText.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
               <Star className="h-4 w-4 text-yellow-400 flex-shrink-0" />
               <p className="text-gray-200 leading-relaxed">
@@ -146,10 +167,10 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     }
 
     // Handle tournament information
-    if (text.toLowerCase().includes('tournament') || text.toLowerCase().includes('championship')) {
+    if (processedText.toLowerCase().includes('tournament') || processedText.toLowerCase().includes('championship')) {
       return (
         <div className="space-y-3">
-          {text.split('\n').filter(line => line.trim()).map((line, index) => (
+          {processedText.split('\n').filter(line => line.trim()).map((line, index) => (
             <div key={index} className="flex items-center space-x-2">
               <Trophy className="h-4 w-4 text-amber-400 flex-shrink-0" />
               <p className="text-gray-200 leading-relaxed">
@@ -164,7 +185,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content }) => 
     // Default paragraph rendering with line breaks and links
     return (
       <div className="space-y-3">
-        {text.split('\n').filter(line => line.trim()).map((line, index) => (
+        {processedText.split('\n').filter(line => line.trim()).map((line, index) => (
           <p key={index} className="text-gray-200 leading-relaxed">
             {renderTextWithLinks(line.trim())}
           </p>

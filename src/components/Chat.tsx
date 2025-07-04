@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useProfile } from '../hooks/useProfile';
-import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Trophy, Calendar, Star, Globe, ChevronDown, Menu, X, Settings } from 'lucide-react';
+import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Trophy, Calendar, Star, Globe, ChevronDown, Menu, X, Settings, Search, MapPin } from 'lucide-react';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
@@ -17,6 +17,12 @@ interface SuggestionCard {
   title: string;
   description: string;
   query: string;
+  explanation: string;
+}
+
+interface PromptSuggestion {
+  text: string;
+  icon: React.ReactNode;
 }
 
 export const Chat: React.FC = () => {
@@ -31,22 +37,44 @@ export const Chat: React.FC = () => {
 
   const suggestionCards: SuggestionCard[] = [
     {
-      icon: <Trophy className="h-5 w-5 text-blue-400" />,
-      title: "Tournament Analysis",
-      description: "Get insights on recent chess tournaments and upcoming events",
-      query: "Show me the latest chess tournament results and upcoming major tournaments"
+      icon: <Calendar className="h-5 w-5 text-blue-400" />,
+      title: "🗓️ Tournament History",
+      description: "Explore past tournaments, results, and player performances",
+      query: "Show me recent tournament results from the Candidates Tournament",
+      explanation: "I'll search for recent tournament data, results, and player performances from major chess events."
     },
     {
-      icon: <Star className="h-5 w-5 text-green-400" />,
-      title: "Player Rankings",
-      description: "Check current FIDE ratings and player statistics",
-      query: "What are the current top 10 chess player rankings?"
+      icon: <Search className="h-5 w-5 text-green-400" />,
+      title: "🔍 Scout a Player",
+      description: "Get detailed info about any chess player's rating and games",
+      query: "Who is Gukesh?",
+      explanation: "I'll fetch FIDE rating, title, recent games, and career highlights for any player you're curious about."
     },
     {
-      icon: <Calendar className="h-5 w-5 text-purple-400" />,
-      title: "Chess Calendar",
-      description: "Find upcoming chess events and tournament schedules",
-      query: "What chess tournaments are happening this month?"
+      icon: <Star className="h-5 w-5 text-purple-400" />,
+      title: "📅 Upcoming Events",
+      description: "Find upcoming chess tournaments and events worldwide",
+      query: "What chess events are coming up in Kerala?",
+      explanation: "I'll search for upcoming tournaments, events, and chess activities in your region or worldwide."
+    }
+  ];
+
+  const promptSuggestions: PromptSuggestion[] = [
+    {
+      text: "What is the FIDE rating of Magnus Carlsen?",
+      icon: <Star className="h-4 w-4 text-yellow-400" />
+    },
+    {
+      text: "What was my last tournament?",
+      icon: <Trophy className="h-4 w-4 text-amber-400" />
+    },
+    {
+      text: "Did I ever play with Carlsen?",
+      icon: <Crown className="h-4 w-4 text-purple-400" />
+    },
+    {
+      text: "What events are coming up in Kerala?",
+      icon: <MapPin className="h-4 w-4 text-blue-400" />
     }
   ];
 
@@ -64,8 +92,23 @@ export const Chat: React.FC = () => {
     setMobileMenuOpen(false);
   };
 
-  const handleSuggestionClick = (query: string) => {
+  const handleSuggestionClick = (query: string, explanation?: string) => {
     setInputMessage(query);
+    
+    if (explanation) {
+      // Add explanation message immediately
+      const explanationMessage: Message = {
+        id: Date.now().toString(),
+        content: explanation,
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, explanationMessage]);
+    }
+  };
+
+  const handlePromptSuggestionClick = (text: string) => {
+    setInputMessage(text);
   };
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -106,9 +149,26 @@ export const Chat: React.FC = () => {
 
       const responseText = await response.text();
       
+      // Enhanced response formatting
+      let formattedResponse = responseText || 'I received your message but couldn\'t generate a proper response.';
+      
+      // Add follow-up prompts based on content
+      if (formattedResponse.toLowerCase().includes('not found') || formattedResponse.toLowerCase().includes('couldn\'t find')) {
+        formattedResponse = "Hmm, I couldn't find that info right now — maybe try another question?\n\nWhat else can I help you with? 🤔";
+      } else {
+        // Add contextual follow-up based on response content
+        if (formattedResponse.toLowerCase().includes('player') || formattedResponse.toLowerCase().includes('rating')) {
+          formattedResponse += "\n\nWant to check another player? 🔍";
+        } else if (formattedResponse.toLowerCase().includes('tournament')) {
+          formattedResponse += "\n\nCurious about other tournaments? 🏆";
+        } else {
+          formattedResponse += "\n\nWhat else can I help you with? ♟️";
+        }
+      }
+      
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: responseText || 'I received your message but couldn\'t generate a proper response.',
+        content: formattedResponse,
         sender: 'bot',
         timestamp: new Date(),
         hasWebSearch: true,
@@ -120,7 +180,7 @@ export const Chat: React.FC = () => {
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
+        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.\n\nWhat else can I help you with? 🤔',
         sender: 'bot',
         timestamp: new Date(),
       };
@@ -140,9 +200,9 @@ export const Chat: React.FC = () => {
 
   const getWelcomeMessage = () => {
     if (profile?.full_name) {
-      return `Welcome back, ${profile.full_name}!`;
+      return `Welcome back, ${profile.full_name}! ♟️`;
     }
-    return 'Welcome to ChessTalks!';
+    return 'Welcome to ChessTalks! ♟️';
   };
 
   const getSubtitle = () => {
@@ -259,7 +319,7 @@ export const Chat: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-32">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-40">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="text-center space-y-6 sm:space-y-8">
@@ -283,7 +343,7 @@ export const Chat: React.FC = () => {
               {suggestionCards.map((card, index) => (
                 <button
                   key={index}
-                  onClick={() => handleSuggestionClick(card.query)}
+                  onClick={() => handleSuggestionClick(card.query, card.explanation)}
                   className="p-4 sm:p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 hover:border-gray-600 transition-all duration-200 text-left group"
                 >
                   <div className="flex items-start space-x-3">
@@ -359,7 +419,7 @@ export const Chat: React.FC = () => {
                   </div>
                   <div className="flex items-center space-x-3 text-gray-400">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm">Analyzing chess data...</span>
+                    <span className="text-sm">Analyzing chess data... ♟️</span>
                   </div>
                 </div>
               </div>
@@ -372,7 +432,24 @@ export const Chat: React.FC = () => {
 
       {/* Input Form - Fixed at bottom */}
       <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto space-y-4">
+          {/* Prompt Suggestions - Only show when no messages */}
+          {messages.length === 0 && (
+            <div className="flex flex-wrap gap-2 justify-center">
+              {promptSuggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePromptSuggestionClick(suggestion.text)}
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group"
+                >
+                  {suggestion.icon}
+                  <span className="hidden sm:inline">{suggestion.text}</span>
+                  <span className="sm:hidden">{suggestion.text.length > 30 ? suggestion.text.substring(0, 30) + '...' : suggestion.text}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <form onSubmit={sendMessage} className="relative">
             <div className="relative bg-gray-800 rounded-2xl border border-gray-700 focus-within:border-gray-600">
               <textarea
@@ -385,7 +462,7 @@ export const Chat: React.FC = () => {
                   }
                 }}
                 disabled={loading}
-                placeholder="Ask anything..."
+                placeholder="Ask anything about chess... ♟️"
                 rows={1}
                 className="w-full px-4 sm:px-6 py-3 sm:py-4 pr-14 sm:pr-16 bg-transparent border-0 focus:ring-0 focus:outline-none text-white placeholder-gray-400 resize-none text-sm sm:text-base"
                 style={{ minHeight: '52px', maxHeight: '120px' }}
@@ -405,7 +482,7 @@ export const Chat: React.FC = () => {
               </div>
             </div>
           </form>
-          <p className="text-xs text-gray-500 mt-2 text-center">
+          <p className="text-xs text-gray-500 text-center">
             ChessTalks can make mistakes. Consider checking important information.
           </p>
         </div>

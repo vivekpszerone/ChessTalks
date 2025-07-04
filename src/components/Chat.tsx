@@ -319,40 +319,40 @@ export const Chat: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-40">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-32 sm:pb-40">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="text-center space-y-6 sm:space-y-8">
             <div className="space-y-4">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight px-2">
                 {getWelcomeMessage()}
               </h2>
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
+              <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight px-2">
                 Chess insights{' '}
                 <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                   in seconds
                 </span>
               </h3>
-              <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4">
+              <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto px-4">
                 {getSubtitle()}
               </p>
             </div>
 
             {/* Suggestion Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
               {suggestionCards.map((card, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(card.query, card.explanation)}
-                  className="p-4 sm:p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 hover:border-gray-600 transition-all duration-200 text-left group"
+                  className="p-4 sm:p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 hover:border-gray-600 transition-all duration-200 text-left group w-full"
                 >
                   <div className="flex items-start space-x-3">
                     <div className="flex-shrink-0 p-2 bg-gray-700 rounded-lg group-hover:bg-gray-600 transition-colors">
                       {card.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-white mb-2 text-sm sm:text-base">{card.title}</h3>
-                      <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">{card.description}</p>
+                      <h3 className="font-semibold text-white mb-2 text-sm sm:text-base break-words">{card.title}</h3>
+                      <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">{card.description}</p>
                     </div>
                   </div>
                 </button>
@@ -369,8 +369,8 @@ export const Chat: React.FC = () => {
                   <div className="flex justify-end">
                     <div className="max-w-full sm:max-w-3xl">
                       <div className="flex items-start space-x-3 justify-end">
-                        <div className="bg-gray-800 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 max-w-full">
-                          <p className="text-white text-sm leading-relaxed break-words">{message.content}</p>
+                        <div className="bg-gray-800 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 max-w-full break-words">
+                          <p className="text-white text-sm leading-relaxed">{message.content}</p>
                         </div>
                         <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                           <User className="h-4 w-4 text-white" />
@@ -440,11 +440,15 @@ export const Chat: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => handlePromptSuggestionClick(suggestion.text)}
-                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group"
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group max-w-full"
                 >
                   {suggestion.icon}
-                  <span className="hidden sm:inline">{suggestion.text}</span>
-                  <span className="sm:hidden">{suggestion.text.length > 30 ? suggestion.text.substring(0, 30) + '...' : suggestion.text}</span>
+                  <span className="truncate max-w-[200px] sm:max-w-none">
+                    {window.innerWidth < 640 && suggestion.text.length > 25 
+                      ? suggestion.text.substring(0, 25) + '...' 
+                      : suggestion.text
+                    }
+                  </span>
                 </button>
               ))}
             </div>

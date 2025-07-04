@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase';
 interface UserProfile {
   id: string;
   full_name: string;
+  fide_id?: string;
   fide_rating?: number;
   chess_title?: string;
   country?: string;

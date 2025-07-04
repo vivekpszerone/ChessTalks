@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { User, Star, Globe, Calendar, Trophy, BookOpen, Target, Upload, ChevronRight, Crown } from 'lucide-react';
+import { User, Star, Globe, Calendar, Trophy, BookOpen, Target, Upload, ChevronRight, Crown, Hash } from 'lucide-react';
 
 interface OnboardingData {
   full_name: string;
+  fide_id: string;
   fide_rating: string;
   chess_title: string;
   country: string;
@@ -27,6 +28,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   
   const [formData, setFormData] = useState<OnboardingData>({
     full_name: '',
+    fide_id: '',
     fide_rating: '',
     chess_title: '',
     country: '',
@@ -77,6 +79,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       const profileData = {
         id: user?.id,
         full_name: formData.full_name.trim(),
+        fide_id: formData.fide_id || null,
         fide_rating: formData.fide_rating ? parseInt(formData.fide_rating) : null,
         chess_title: formData.chess_title || null,
         country: formData.country || null,
@@ -167,7 +170,24 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            FIDE Rating
+            FIDE ID
+          </label>
+          <div className="relative">
+            <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              value={formData.fide_id}
+              onChange={(e) => handleInputChange('fide_id', e.target.value)}
+              className="w-full pl-10 pr-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-700/50 text-white placeholder-gray-400"
+              placeholder="e.g., 1503014"
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Your official FIDE player ID (if you have one)</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Current Rating
           </label>
           <input
             type="number"
@@ -178,6 +198,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             min="0"
             max="3000"
           />
+          <p className="text-xs text-gray-500 mt-1">Your current FIDE or estimated rating</p>
         </div>
 
         <div>

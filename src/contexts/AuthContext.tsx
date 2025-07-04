@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Force clear the state
       setSession(null);
       setUser(null);
-      // Redirect to home page instead of login to avoid 404
+      // Redirect to home page
       window.location.href = '/';
     } catch (err) {
       console.error('Sign out error:', err);

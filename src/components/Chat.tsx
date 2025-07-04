@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Trophy, Calendar, Star, Globe, ChevronDown, Menu, X } from 'lucide-react';
+import { useProfile } from '../hooks/useProfile';
+import { Send, LogOut, Crown, User, Loader2, AlertCircle, Trash2, Trophy, Calendar, Star, Globe, ChevronDown, Menu, X, Settings } from 'lucide-react';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {
@@ -20,6 +21,7 @@ interface SuggestionCard {
 
 export const Chat: React.FC = () => {
   const { user, signOut, session } = useAuth();
+  const { profile } = useProfile();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -136,6 +138,20 @@ export const Chat: React.FC = () => {
     }
   };
 
+  const getWelcomeMessage = () => {
+    if (profile?.full_name) {
+      return `Welcome back, ${profile.full_name}!`;
+    }
+    return 'Welcome to ChessTalks!';
+  };
+
+  const getSubtitle = () => {
+    if (profile?.fide_rating) {
+      return `FIDE Rating: ${profile.fide_rating} • Your Chess AI Assistant`;
+    }
+    return 'Your Chess AI Assistant';
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Sticky Top Header */}
@@ -158,9 +174,14 @@ export const Chat: React.FC = () => {
 
             {/* Desktop Menu */}
             <div className="hidden sm:flex items-center space-x-4">
-              <span className="text-sm text-gray-400 truncate max-w-48">
-                {user?.email}
-              </span>
+              <div className="text-right">
+                <div className="text-sm text-gray-300 truncate max-w-48">
+                  {profile?.full_name || user?.email}
+                </div>
+                {profile?.chess_title && (
+                  <div className="text-xs text-blue-400">{profile.chess_title}</div>
+                )}
+              </div>
               {messages.length > 0 && (
                 <button
                   onClick={clearChat}
@@ -194,8 +215,11 @@ export const Chat: React.FC = () => {
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="sm:hidden mt-4 pt-4 border-t border-gray-800 space-y-3">
-              <div className="text-sm text-gray-400 truncate">
-                {user?.email}
+              <div className="text-sm text-gray-300">
+                {profile?.full_name || user?.email}
+                {profile?.chess_title && (
+                  <div className="text-xs text-blue-400">{profile.chess_title}</div>
+                )}
               </div>
               {messages.length > 0 && (
                 <button
@@ -241,13 +265,16 @@ export const Chat: React.FC = () => {
           <div className="text-center space-y-6 sm:space-y-8">
             <div className="space-y-4">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight">
+                {getWelcomeMessage()}
+              </h2>
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight">
                 Chess insights{' '}
                 <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
                   in seconds
                 </span>
-              </h2>
+              </h3>
               <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto px-4">
-                ChessTalks is your AI assistant for tournaments, player ratings, upcoming events, and more
+                {getSubtitle()}
               </p>
             </div>
 

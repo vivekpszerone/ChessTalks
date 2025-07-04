@@ -319,7 +319,7 @@ export const Chat: React.FC = () => {
       )}
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-32 sm:pb-40">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-44 sm:pb-40">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="text-center space-y-6 sm:space-y-8">
@@ -339,19 +339,19 @@ export const Chat: React.FC = () => {
             </div>
 
             {/* Suggestion Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto px-2">
               {suggestionCards.map((card, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(card.query, card.explanation)}
-                  className="p-4 sm:p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 hover:border-gray-600 transition-all duration-200 text-left group w-full"
+                  className="p-4 sm:p-6 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 hover:border-gray-600 transition-all duration-200 text-left group w-full min-h-[120px] sm:min-h-[140px]"
                 >
-                  <div className="flex items-start space-x-3">
+                  <div className="flex items-start space-x-3 h-full">
                     <div className="flex-shrink-0 p-2 bg-gray-700 rounded-lg group-hover:bg-gray-600 transition-colors">
                       {card.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-white mb-2 text-sm sm:text-base break-words">{card.title}</h3>
+                      <h3 className="font-semibold text-white mb-2 text-sm sm:text-base break-words leading-tight">{card.title}</h3>
                       <p className="text-xs sm:text-sm text-gray-400 leading-relaxed break-words">{card.description}</p>
                     </div>
                   </div>
@@ -431,21 +431,22 @@ export const Chat: React.FC = () => {
       </div>
 
       {/* Input Form - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 px-4 sm:px-6 py-4">
+      <div className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-sm border-t border-gray-800 px-4 sm:px-6 py-4 z-40">
         <div className="max-w-6xl mx-auto space-y-4">
           {/* Prompt Suggestions - Only show when no messages */}
           {messages.length === 0 && (
-            <div className="flex flex-wrap gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center max-w-4xl mx-auto">
               {promptSuggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => handlePromptSuggestionClick(suggestion.text)}
-                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group max-w-full"
+                  className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 rounded-full text-sm text-gray-300 hover:text-white transition-all duration-200 group flex-shrink-0"
                 >
                   {suggestion.icon}
-                  <span className="truncate max-w-[200px] sm:max-w-none">
-                    {window.innerWidth < 640 && suggestion.text.length > 25 
-                      ? suggestion.text.substring(0, 25) + '...' 
+                  <span className="hidden sm:inline whitespace-nowrap">{suggestion.text}</span>
+                  <span className="sm:hidden text-xs whitespace-nowrap">
+                    {suggestion.text.length > 20 
+                      ? suggestion.text.substring(0, 20) + '...' 
                       : suggestion.text
                     }
                   </span>
